@@ -1,5 +1,8 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { v4 as uuidv4 } from 'uuid';
 import { refs } from "./refs";
 import storage from "./storage";
+
 
 let data = {};
 const KEY = "save-todo";
@@ -12,7 +15,7 @@ initData();
 function onSaveTodo(evt) {
     const { name, value } = evt.target;
     data[name] = value;
-    storage.save(KEY, data);
+    storage.save(KEY, { ...data, id:uuidv4() });
 };
 function initData() {
     const savedTodo = storage.load(KEY);
@@ -27,11 +30,20 @@ function initData() {
 function onSubmit(e) { 
     e.preventDefault();
     if (!data.text || !data.priority) {
-        alert("Заповніть всі поля форми");
+        Notify.failure('Заповніть всі поля форми');
         return;
     }
-    console.log(data);
+    renderData(data);
     data = {};
     refs.form.reset();
     storage.remove(KEY);
 };
+
+function renderData(data) {
+    const markup = `<li>todo:${data.text}, priority:${data.priority} <button type="button" class="todo__delete" id=${uuidv4()}></button></li>`;
+    refs.list.insertAdjacentHTML("afterbegin", markup);
+    Notify.success('Нотатка додана');
+}
+
+
+
