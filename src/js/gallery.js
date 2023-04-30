@@ -24,7 +24,7 @@ const page = pagination.getCurrentPage();
 
 api
   .getPopularImages(page)
-  .then(({ results, total }) => {
+    .then(({ results, total }) => {
     pagination.reset(total);
     const markup = createGalleryCard(results);
     list.insertAdjacentHTML('beforeend', markup);
@@ -74,7 +74,11 @@ function onSubmit(e) {
   api.query = inputValue;
   api
     .getImagesByQuery(page)
-    .then(({ results, total }) => {
+      .then(({ results, total }) => {
+    if (total === 0) {
+        Notify.failure('NOT FAUND');
+            return;
+      }
       pagination.reset(total);
       list.innerHTML = '';
       const markup = createGalleryCard(results);
